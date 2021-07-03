@@ -1,6 +1,10 @@
 
 public class Node {
     char data;
-    int LSub = 0;
-    int RSub = 0;
+    Node LSub = null;
+    Node RSub = null;
+    Node(){};
+    Node(char a){
+        data = a;
+    }
 }

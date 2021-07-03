@@ -2,9 +2,7 @@ import java.util.Scanner;
 
 public class BinTree {
 
-    private Node[] arr;
-    private int sizeArray = 0;
-    private int root;
+    private Node root;
 
     private int read_k;
     private int read_index;
@@ -12,61 +10,52 @@ public class BinTree {
     private int sum;
 
     BinTree(){
-        arr = new Node[0];
+        root = new Node();
     }
-
-    private void resize(int newSize) {
-        Node[] newArr = new Node[newSize];
-        System.arraycopy(arr, 0, newArr, 0, arr.length);
-        sizeArray = newSize;
-        arr = newArr;
-        arr[newSize - 1] = new Node();
-    }
-
+    
     public void read() {
         read_index = 0;
         read_k = 0;
         Scanner scan = new Scanner(System.in);
         String str = scan.next();
         char  ch = str.charAt(read_k);
-        if (ch == '(')
-            root = readBinTree(ch, str);
+        if (ch == '(') {
+            root.data = str.charAt(++read_k);
+            readBinTree(root, str);
+        }
     }
 
 
 
-    private int readBinTree(char prev, String str) {
-        if (prev != '(')
-            return -1;
+    private void readBinTree(Node currentNode, String str) {
         char buf;
-        resize(sizeArray + 1);
-        int currentIndex = read_index;
-        arr[currentIndex].data = str.charAt(++read_k);
         buf = str.charAt(++read_k);
         if (buf == '(') {
-            read_index ++;
-            arr[currentIndex].LSub = readBinTree(buf, str);
+            Node newNodeL = new Node(str.charAt(++read_k));
+            currentNode.LSub = newNodeL;
+            readBinTree(newNodeL, str);
             buf = str.charAt(++read_k);
             if (buf == '(') {
-                read_index++;
-                arr[currentIndex].RSub = readBinTree(buf, str);
+                Node newNodeR = new Node(str.charAt(++read_k));
+                currentNode.RSub = newNodeR;
+                readBinTree(newNodeR, str);
             }
         }
         else if (buf == '^') {
             buf = str.charAt(++read_k);
             if (buf == '(') {
-                read_index++;
-                arr[currentIndex].RSub = readBinTree(buf, str);
+                Node newNodeR = new Node(str.charAt(++read_k));
+                currentNode.RSub = newNodeR;
+                readBinTree(newNodeR, str);
             }
         }
         if (buf == ')')
-            return currentIndex;
+            return;
         buf = str.charAt(++read_k);
-        return currentIndex;
     }
 
     public void write() {
-        if (sizeArray == 0) {
+        if (root == null) {
             System.out.println("()");
             return;
         }
@@ -74,49 +63,48 @@ public class BinTree {
         System.out.print("\n");
     }
 
-    private void writeBinTree(int i) {
-        System.out.print("(" + arr[i].data);
-        if (arr[i].LSub != 0){
-            writeBinTree(arr[i].LSub);
-            if (arr[i].RSub != 0)
-                writeBinTree(arr[i].RSub);
+    private void writeBinTree(Node currentNode) {
+        System.out.print("(" + currentNode.data);
+        if (currentNode.LSub != null){
+            writeBinTree(currentNode.LSub);
+            if (currentNode.RSub != null)
+                writeBinTree(currentNode.RSub);
         }
-        else if (arr[i].RSub != 0) {
+        else if (currentNode.RSub != null) {
             System.out.print("^");
-            writeBinTree(arr[i].RSub);
+            writeBinTree(currentNode.RSub);
         }
         System.out.print(")");
     }
 
     public void writeLists() {
-        int i = root;
-        writeLists(i, 1);
+        writeLists(root, 1);
     }
 
-    private void writeLists(int i, int lvl) {
-        if (arr[i].LSub != 0)
-            writeLists(arr[i].LSub, lvl + 1);
-        if (arr[i].RSub != 0)
-            writeLists(arr[i].RSub, lvl + 1);
-        if (arr[i].LSub == 0 && arr[i].RSub == 0)
-            System.out.println("level = " + lvl + " leaf data = " + arr[i].data);
+    private void writeLists(Node currentNode, int lvl) {
+        if (currentNode.LSub != null)
+            writeLists(currentNode.LSub, lvl + 1);
+        if (currentNode.RSub != null)
+            writeLists(currentNode.RSub, lvl + 1);
+        if (currentNode.LSub == null && currentNode.RSub == null)
+            System.out.println("level = " + lvl + " leaf data = " + currentNode.data);
     }
 
     public void numberNodes(final int n) {
         sum = 0;
         numberNodes(n, root, 1);
-        System.out.println( "Number of nodes at level " + n + " = " + sum);
+        System.out.println("Number of nodes at level " + n + " = " + sum);
     }
 
-    private void numberNodes(final int n, int i, int currentLvl) {
-        System.out.println("Level = " + currentLvl + " data = " + arr[i].data + " sum = " + sum);
+    private void numberNodes(final int n, Node currentNode, int currentLvl) {
+        System.out.println("Level = " + currentLvl + " data = " + currentNode.data + " sum = " + sum);
         if (currentLvl == n) {
             sum++;
             return;
         }
-        if (arr[i].LSub != 0)
-            numberNodes(n, arr[i].LSub, currentLvl + 1);
-        if (arr[i].RSub != 0)
-            numberNodes(n, arr[i].RSub, currentLvl + 1);
+        if (currentNode.LSub != null)
+            numberNodes(n, currentNode.LSub, currentLvl + 1);
+        if (currentNode.RSub != null)
+            numberNodes(n, currentNode.RSub, currentLvl + 1);
     }
 }
