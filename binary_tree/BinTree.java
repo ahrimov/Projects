@@ -5,7 +5,6 @@ public class BinTree {
     private Node root;
 
     private int read_k;
-    private int read_index;
 
     private int sum;
 
@@ -14,7 +13,6 @@ public class BinTree {
     }
     
     public void read() {
-        read_index = 0;
         read_k = 0;
         Scanner scan = new Scanner(System.in);
         String str = scan.next();
